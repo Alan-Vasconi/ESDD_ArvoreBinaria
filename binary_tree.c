@@ -1,89 +1,80 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
+#include <string.h>
 #include "binary_tree.h"
-#include "pilha.h"
 
-node* create_node(int element) {
-    node* result = (node*) malloc(sizeof(node));
-    if (result != NULL) {
-        result->left = result->right = NULL;
-        result->element = element;
-    }
-    return result;
+t_binary_tree* new_node(char data) {
+    t_binary_tree* node = (t_binary_tree*)malloc(sizeof(t_binary_tree));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
 }
 
-arvore_binaria* create_tree(const char *dados) {
-    arvore_binaria *arvore = (arvore_binaria*) malloc(sizeof(arvore_binaria));
-    arvore->root = NULL;
-    const char *pos = dados;
-    node **current = &(arvore->root);
+t_binary_tree* create_tree(const char** str) {
+    if (**str == '\0' || **str == ')') return NULL;
 
-    t_pilha *pilha = criar_pilha(100); 
+    if (**str == '(') (*str)++;
 
-    while (*pos) {
-        if (*pos == '(') {
-            pos++;
-            if (*pos != ',' && *pos != ')') { 
-                int num = 0, sign = 1;
-                if (*pos == '-') { sign = -1; pos++; }
-                while (isdigit(*pos)) {
-                    num = num * 10 + (*pos - '0');
-                    pos++;
-                }
-                *current = create_node(num * sign);
-                empurrar(pilha, *current); 
-                current = &((*current)->left);
-            }
-        } else if (*pos == ',') {
-            pos++;
-            current = &(pilha->itens[pilha->index_topo]->right);
-        } else if (*pos == ')') {
-            pos++;
-            remover(pilha);
-        } else {
-            pos++;
-        }
+    if (**str == '\0' || **str == ')') return NULL;
+
+    t_binary_tree* root = new_node(**str);
+    (*str)++;
+
+    if (**str == ',') {
+        (*str)++;
+        root->left = create_tree_recursive(str);
     }
 
-    free(pilha->itens);
-    free(pilha);
-
-    return arvore;
-}
-
-void print_tree(node *node) { // Imprime de forma padrão, tem que atualizar para hierarquia
-    if (!node) { printf("()"); return; }
-    printf("(%d", node->element);
-    printf(",");
-    print_tree(node->left);
-    printf(",");
-    print_tree(node->right);
-    printf(")");
-}
-
-void pre_order(node *no){
-    if (no != NULL){
-        prinft("%d\t", no->element);
-        pre_order(no->left);
-        pre_order(no->right);
+    if (**str == ',') {
+        (*str)++;
+        root->right = create_tree_recursive(str);
     }
+
+    if (**str == ')') (*str)++;
+
+    return root;
 }
 
-void in_order(node *no){
-    if(no != NULL){
-        in_order(no->left);
-        printf("%d\t",no->element);
-        in_order(no->right);
-    }
+void pre_order(t_binary_tree* root) {
+    if (root == NULL) return;
+    printf("%c ", root->data);
+    pre_order(root->left);
+    pre_order(root->right);
 }
 
-void post_order(node *no){
-    if(no != NULL){
-        post_order(no->left);
-        post_order(no->right);
-        printf("%d\t",no->element);
-    }
+void in_order(t_binary_tree* root) {
+    if (root == NULL) return;
+    in_order(root->left);
+    printf("%c ", root->data);
+    in_order(root->right);
 }
 
+void post_order(t_binary_tree* root) {
+    if (root == NULL) return;
+    post_order(root->left);
+    post_order(root->right);
+    printf("%c ", root->data);
+}
 
+int height(t_binary_tree* root) {
+    if (root == NULL) return 0;
+    int left_height = height(root->left);
+    int right_height = height(root->right);
+    return 1 + (left_height > right_height ? left_height : right_height);
+}
+
+void print_tree(t_binary_tree* root, int depth) {
+    if (root == NULL) return;
+    print_tree(root->right, depth + 1);
+    for (int i = 0; i < depth; i++) printf("   ");
+    printf("%c\n", root->data);
+    print_tree(root->left, depth + 1);
+}
+
+void free_tree(t_binary_tree* root) {
+    if (root == NULL) return;
+    free_tree(root->left);
+    free_tree(root->right);
+    free(root);
+}
