@@ -81,16 +81,13 @@ make clean
 
 ### Exemplo de Uso
 
-A string de entrada `"1(2(4,5),3(6,7))"` cria a seguinte árvore:
+A string de entrada `"(A,(B,(),()),(C,(F,(),()),()))"` cria a seguinte hierarquia de árvore:
 
 ```
-   3
-      7
-   1
-      6
-   2
-      5
-      4
+   C
+      F
+A
+   B
 ```
 
 
