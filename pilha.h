@@ -1,20 +1,19 @@
 #ifndef PILHA_H
 #define PILHA_H
 
-#include <stdbool.h>
-
-typedef struct node* t_elem;
+#include "binary_tree.h"
 
 typedef struct {
-    int max;
-    int index_topo;
-    t_elem *itens;
+    int capacity;
+    int top;
+    node **itens;
 } t_pilha;
 
-t_pilha* criar_pilha(int n);
-bool esta_cheio(t_pilha *p);
-bool esta_vazio(t_pilha *p);
-bool empurrar(t_pilha *p, t_elem x);
-t_elem remover(t_pilha *p);
+t_pilha* criar_pilha(int capacidade);
+void destruir_pilha(t_pilha *pilha);
+int pilha_vazia(t_pilha *pilha);
+int pilha_cheia(t_pilha *pilha);
+void empurrar(t_pilha *pilha, node *item);
+node* remover(t_pilha *pilha);
 
 #endif

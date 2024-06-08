@@ -3,45 +3,81 @@
 #include <string.h>
 #include "binary_tree.h"
 
-#define MAX_INPUT_SIZE 256
-
-void process_commands() {
-    char input[MAX_INPUT_SIZE];
-    t_binary_tree* tree = NULL;
+int main() {
+    arvore_binaria *arvore = NULL;
+    char comando[256];
+    char input[256];
+    char n[256];
 
     while (1) {
-        printf("Enter command: ");
-        fgets(input, MAX_INPUT_SIZE, stdin);
-        input[strcspn(input, "\n")] = 0;
+        printf("Digite um comando (create, pre, in, post, height <n>, print, exit): ");
+        fgets(comando, sizeof(comando), stdin);
+        comando[strcspn(comando, "\n")] = '\0'; 
 
-        if (strncmp(input, "create ", 7) == 0) {
-            if (tree != NULL) free_tree(tree);
-            tree = create_tree(input + 7);
-            if (tree == NULL) printf("Invalid expression\n");
-        } else if (strcmp(input, "pre") == 0) {
-            pre_order(tree);
-            printf("\n");
-        } else if (strcmp(input, "in") == 0) {
-            in_order(tree);
-            printf("\n");
-        } else if (strcmp(input, "post") == 0) {
-            post_order(tree);
-            printf("\n");
-        } else if (strncmp(input, "height ", 7) == 0) {
-            printf("%d\n", height(tree));
-        } else if (strcmp(input, "print") == 0) {
-            print_tree(tree, 0);
-        } else if (strcmp(input, "exit") == 0) {
+        if (strncmp(comando, "create", 6) == 0) {
+            if (comando[6] == ' ') {
+                strncpy(input, comando + 7, sizeof(input) - 1);
+                input[sizeof(input) - 1] = '\0'; 
+                printf("Comando recebido: create %s\n", input); 
+                arvore = create_tree(input);
+                if (arvore) {
+                    printf("Árvore criada com sucesso.\n");
+                } else {
+                    printf("Falha ao criar a árvore.\n");
+                }
+            } else {
+                printf("Comando invalido.\n");
+            }
+        } else if (strcmp(comando, "pre") == 0) {
+            if (arvore && arvore->root) {
+                pre_order(arvore->root);
+                printf("\n");
+            } else {
+                printf("Arvore nao criada.\n");
+            }
+        } else if (strcmp(comando, "in") == 0) {
+            if (arvore && arvore->root) {
+                in_order(arvore->root);
+                printf("\n");
+            } else {
+                printf("Arvore nao criada.\n");
+            }
+        } else if (strcmp(comando, "post") == 0) {
+            if (arvore && arvore->root) {
+                post_order(arvore->root);
+                printf("\n");
+            } else {
+                printf("Arvore nao criada.\n");
+            }
+        } else if (strncmp(comando, "height", 6) == 0) {
+            if (comando[6] == ' ') {
+                strncpy(n, comando + 7, sizeof(n) - 1);
+                n[sizeof(n) - 1] = '\0'; 
+                if (arvore && arvore->root) {
+                    int h = find_height(arvore->root, n);
+                    if (h == -1) {
+                        printf("No %s nao encontrado.\n", n);
+                    } else {
+                        printf("Altura do no %s: %d\n", n, h);
+                    }
+                } else {
+                    printf("Arvore nao criada.\n");
+                }
+            } else {
+                printf("Comando invalido.\n");
+            }
+        } else if (strcmp(comando, "print") == 0) {
+            if (arvore && arvore->root) {
+                print_tree_hierarchy(arvore->root, 0);
+            } else {
+                printf("Arvore nao criada.\n");
+            }
+        } else if (strcmp(comando, "exit") == 0) {
             break;
         } else {
-            printf("Invalid command\n");
+            printf("Comando invalido.\n");
         }
     }
 
-    if (tree != NULL) free_tree(tree);
-}
-
-int main() {
-    process_commands();
     return 0;
 }

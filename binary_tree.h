@@ -1,19 +1,23 @@
 #ifndef BINARY_TREE_H
 #define BINARY_TREE_H
 
-typedef struct t_binary_tree {
-    char data;
-    struct t_binary_tree *left;
-    struct t_binary_tree *right;
-} t_binary_tree;
+typedef struct node {
+    char *element;
+    struct node *left;
+    struct node *right;
+} node;
 
+typedef struct {
+    node *root;
+} arvore_binaria;
 
-t_binary_tree* create_tree(const char* str);
-void pre_order(t_binary_tree* root);
-void in_order(t_binary_tree* root);
-void post_order(t_binary_tree* root);
-int height(t_binary_tree* root);
-void print_tree(t_binary_tree* root, int depth);
-void free_tree(t_binary_tree* root);
+node* create_node(const char *element);
+arvore_binaria* create_tree(const char *dados);
+void print_tree(node *node);
+void pre_order(node *no);
+void in_order(node *no);
+void post_order(node *no);
+void print_tree_hierarchy(node *node, int level);
+int find_height(node* root, const char *element);
 
 #endif
