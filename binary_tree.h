@@ -7,11 +7,6 @@ typedef struct t_binary_tree {
     struct t_binary_tree *right;
 } t_binary_tree;
 
-typedef struct node_t {
-    char data;
-    struct node_t *left;
-    struct node_t *right;
-} node_t;
 
 t_binary_tree* create_tree(const char* str);
 void pre_order(t_binary_tree* root);
